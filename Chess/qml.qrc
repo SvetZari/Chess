@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>chess.qml</file>
+        <file>ActionMenu.qml</file>
+        <file>Plate.qml</file>
+    </qresource>
+</RCC>
