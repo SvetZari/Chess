@@ -2,15 +2,20 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtQuick.Window 2.2
 
+import "gameboard.js" as GameBoard
 
 ApplicationWindow {
     title: "Chess"
-    width: 490; height: 400;
+    width: 430; height: 470;
     visible: true
 
     Rectangle {
         id: gameScreen
         anchors.fill: parent
+
+        Component.onCompleted: {
+            GameBoard.createGameBoard()
+        }
 
         Item {
             width: parent.width
@@ -24,11 +29,17 @@ ApplicationWindow {
 
             Item {
                 id: gameBoard
+
+                width: parent.width - 40
+                height: parent.height - 40
+                anchors.centerIn: parent
+
+            }
         }
 
         Rectangle {
             id: actionBar
-            width: parent.width; height: 30
+            width: parent.width; height: 40
             anchors.bottom: gameScreen.bottom
 
             ActionMenu {
