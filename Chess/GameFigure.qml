@@ -7,6 +7,7 @@ import Side 1.0
 import "gameboard.js" as GameBoard
 
 Item {
+    id: root
 
     property int column: 0
     property int row: 0
@@ -14,12 +15,47 @@ Item {
     property int figure: ChessFigure.Pawn
     property int side: ChessSide.White
 
-    Image  {
-        id: image
-        source: "image/pawn_white.png"
-        fillMode: Image.PreserveAspectFit
+    property var lastRoot: root
+
+    MouseArea {
+        id: mouseArea
+
         anchors.fill: parent
-        anchors.margins: 2
+        drag.target: tile
+        onReleased: {
+            if(tile.Drag.target !== null)
+                lastRoot = tile.Drag.target;
+            parent = lastRoot;
+        }
+
+        Rectangle {
+            id: tile
+
+            width: 64; height: 64
+            anchors.verticalCenter: parent.verticalCenter
+            anchors.horizontalCenter: parent.horizontalCenter
+
+            color: "transparent"
+            Drag.active: mouseArea.drag.active
+            Drag.hotSpot.x: 32
+            Drag.hotSpot.y: 32
+
+
+
+            Image  {
+                id: image
+                source: "image/pawn_white.png"
+                fillMode: Image.PreserveAspectFit
+                anchors.fill: parent
+                anchors.margins: 2
+            }
+
+            states: State {
+                when: mouseArea.drag.active
+                ParentChange { target: tile; parent: root }
+                AnchorChanges { target: tile; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
+            }
+        }
     }
 
     /*
@@ -30,8 +66,7 @@ Item {
     2 knight
     8 pawn
     */
-    function init()
-    {
+    function init() {
         if(row == 0 || row == 1)
             side = ChessSide.Black;
         else if(row == GameBoard.rows - 1 || row == GameBoard.rows - 2)
@@ -41,8 +76,7 @@ Item {
 
         if(row == 1 || row == GameBoard.rows - 2)
             figure = ChessFigure.Pawn
-        else
-        {
+        else {
             if(column == 0 || column == GameBoard.columns - 1)
                 figure = ChessFigure.Rook
             else if(column == 1 || column == GameBoard.columns - 2)
@@ -60,12 +94,10 @@ Item {
         image.source = getImageSource(figure, side);
     }
 
-    function getImageSource(figure, side)
-    {
+    function getImageSource(figure, side) {
         var path = "";
 
-        switch(figure)
-        {
+        switch(figure) {
         case ChessFigure.Pawn:
             path = "pawn";
             break;
