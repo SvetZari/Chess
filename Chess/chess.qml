@@ -6,7 +6,7 @@ import "gameboard.js" as GameBoard
 
 ApplicationWindow {
     title: "Chess"
-    width: 430; height: 470;
+    width: 630; height: 670;
     visible: true
 
     Rectangle {
@@ -45,6 +45,8 @@ ApplicationWindow {
             ActionMenu {
                 id: actionMenu
                 anchors.fill: parent
+
+                btnStart.onClicked: GameBoard.startGame()
             }
         }
     }

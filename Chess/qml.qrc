@@ -2,7 +2,20 @@
     <qresource prefix="/">
         <file>chess.qml</file>
         <file>gameboard.js</file>
+        <file>GameFigure.qml</file>
         <file>ActionMenu.qml</file>
-        <file>Plate.qml</file>
+        <file>BoardPlate.qml</file>
+        <file>image/bishop_white.png</file>
+        <file>image/bishop_black.png</file>
+        <file>image/king_black.png</file>
+        <file>image/king_white.png</file>
+        <file>image/knight_black.png</file>
+        <file>image/knight_white.png</file>
+        <file>image/pawn_black.png</file>
+        <file>image/pawn_white.png</file>
+        <file>image/queen_black.png</file>
+        <file>image/queen_white.png</file>
+        <file>image/rook_black.png</file>
+        <file>image/rook_white.png</file>
     </qresource>
 </RCC>
