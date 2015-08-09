@@ -4,32 +4,100 @@ import QtQuick.Layouts 1.1
 
 Item
 {
-    width: 300
-    height: 50
+    width: 400
+    height: 40
 
     property alias btnStart: btnStart
     property alias btnLoad: btnLoad
-    RowLayout
-    {
-        id: menuStart
-        anchors.horizontalCenter: parent.horizontalCenter
-        anchors.fill: parent
-        visible: true
 
-        Button
-        {
-            id: btnStart
-            text: qsTr("Start")
-            anchors { left: parent.left; verticalCenter: parent.verticalCenter }
-            anchors.leftMargin: 50
+    property alias bntStop: bntStop
+    property alias btnSave: btnSave
+
+    property alias bntPrev: bntPrev
+    property alias btnNext: btnNext
+
+    RowLayout {
+        spacing: 50
+        anchors.fill: parent
+
+        Rectangle {
+            Layout.fillHeight: true;
+            Layout.fillWidth: true;
         }
 
-        Button
-        {
-            id: btnLoad
-            text: qsTr("Load")
-            anchors { right: parent.right; verticalCenter: parent.verticalCenter }
-            anchors.rightMargin: 50
+        Rectangle {
+            id: menuStart
+            width: 150
+            Layout.fillHeight: true
+            visible: true
+
+            Button {
+                id: btnStart
+                text: qsTr("Start")
+                anchors { left: parent.left; verticalCenter: parent.verticalCenter }
+                onClicked: {
+                    menuStart.visible = false;
+                    menuGame.visible = true;
+                    menuSavedGame.visible = false;
+                }
+            }
+
+            Button {
+                id: btnLoad
+                text: qsTr("Load")
+                anchors { right: parent.right; verticalCenter: parent.verticalCenter }
+                onClicked: {
+                    menuSavedGame.visible = true;
+                }
+            }
+        }
+
+        Rectangle {
+            id: menuGame
+            width: 150
+            Layout.fillHeight: true
+            visible: false
+
+            Button {
+                id: bntStop
+                text: qsTr("Stop")
+                anchors { left: parent.left; verticalCenter: parent.verticalCenter }
+                onClicked: {
+                    menuGame.visible = false;
+                    menuSavedGame.visible = false;
+                    menuStart.visible = true;
+                }
+            }
+
+            Button {
+                id: btnSave
+                text: qsTr("Save")
+                anchors { right: parent.right; verticalCenter: parent.verticalCenter }
+            }
+        }
+
+        Rectangle {
+            id: menuSavedGame
+            width: 150
+            Layout.fillHeight: true
+            visible: false
+
+            Button {
+                id: bntPrev
+                text: qsTr("Prev")
+                anchors { left: parent.left; verticalCenter: parent.verticalCenter }
+            }
+
+            Button {
+                id: btnNext
+                text: qsTr("Next")
+                anchors { right: parent.right; verticalCenter: parent.verticalCenter }
+            }
+        }
+
+        Rectangle {
+            Layout.fillHeight: true;
+            Layout.fillWidth: true;
         }
     }
 }
