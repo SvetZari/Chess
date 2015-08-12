@@ -5,6 +5,7 @@ import QtQuick.Window 2.2
 import "gameboard.js" as GameBoard
 
 ApplicationWindow {
+    id: window
     title: "Chess"
     width: 630; height: 670;
     visible: true
@@ -18,7 +19,7 @@ ApplicationWindow {
         }
 
         Item {
-            width: parent.width
+            width: window.width
             anchors { top: parent.top; bottom: actionBar.top }
 
             Rectangle {
@@ -32,6 +33,8 @@ ApplicationWindow {
 
                 width: parent.width - 40
                 height: parent.height - 40
+                width: window.width - 40
+                height: window.height - 80
                 anchors.centerIn: parent
 
             }
@@ -39,7 +42,7 @@ ApplicationWindow {
 
         Rectangle {
             id: actionBar
-            width: parent.width; height: 40
+            width: window.width; height: 40
             anchors.bottom: gameScreen.bottom
 
             ActionMenu {
