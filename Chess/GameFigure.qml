@@ -9,8 +9,9 @@ import "gameboard.js" as GameBoard
 Item {
     id: root
 
-    property int column: 0
-    property int row: 0
+    property int column: -1
+    property int row: -1
+    property int index: -1
 
     property int figure: ChessFigure.Pawn
     property int side: ChessSide.White
@@ -44,7 +45,7 @@ Item {
 
             Image  {
                 id: image
-                source: "image/pawn_white.png"
+                source: ""
                 fillMode: Image.PreserveAspectFit
                 anchors.fill: parent
                 anchors.margins: 2
