@@ -16,10 +16,8 @@ function getChessBoardModel()
         for (var row = 0; row < rows; row++) {
             chessboard[index(column, row)] =
             {
-                index: index(column, row),
                 row: row,
                 column: column,
-
             }
         }
     }
@@ -27,46 +25,6 @@ function getChessBoardModel()
     return chessboard;
 }
 
-function getChessManModel()
-{
-    // Clear
-    for (var i = 0; i < maxIndex; i++) {
-        if (chessman[i] != null)
-            chessman[i].destroy();
-    }
-    chessman = new Array(maxIndex);
-
-    for (var column = 0; column < columns; column++) {
-        for (var row = 0; row < rows; row++) {
-            chessman[index(column, row)] =
-            {
-                index: index(column, row),
-                row: row,
-                column: column,
-
-            }
-        }
-    }
-
-    return chessman;
-}
-
-
-function (column, row)
-{
-    console.log(chessboard[index(1, 1)]);
-
-    for (var i = 0; i < maxIndex; i++) {
-        if (chessboard[i] != null)
-        {
-
-        console.log(chessboard[i]);
-            chessboard[i].destroy();
-        }
-    }
-
-    return true;
-}
 
 
 /*

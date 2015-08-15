@@ -1,20 +1,22 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 
-import Figure 1.0
-import Side 1.0
+import Logic 1.0
 
 import "gameboard.js" as GameBoard
 
 Item {
     id: root
 
+    signal dragStarted
+    signal dragFinished
+
     property int column: -1
     property int row: -1
     property int index: -1
 
-    property int figure: ChessFigure.Pawn
-    property int side: ChessSide.White
+    property int figure: Logic.Pawn
+    property int side: Logic.White
 
     property var lastRoot: root
 
@@ -23,11 +25,8 @@ Item {
 
         anchors.fill: parent
         drag.target: tile
-        onReleased: {
-            if(tile.Drag.target !== null)
-                lastRoot = tile.Drag.target;
-            parent = lastRoot;
-        }
+        onReleased: root.dragFinished()
+        onPressed: root.dragStarted()
 
         Rectangle {
             id: tile
@@ -40,7 +39,6 @@ Item {
             Drag.active: mouseArea.drag.active
             Drag.hotSpot.x: 32
             Drag.hotSpot.y: 32
-
 
 
             Image  {
@@ -69,25 +67,25 @@ Item {
     */
     function init() {
         if(row == 0 || row == 1)
-            side = ChessSide.Black;
+            side = Logic.Black;
         else if(row == GameBoard.rows - 1 || row == GameBoard.rows - 2)
-            side = ChessSide.White
+            side = Logic.White
         else
             return;
 
         if(row == 1 || row == GameBoard.rows - 2)
-            figure = ChessFigure.Pawn
+            figure = Logic.Pawn
         else {
             if(column == 0 || column == GameBoard.columns - 1)
-                figure = ChessFigure.Rook
+                figure = Logic.Rook
             else if(column == 1 || column == GameBoard.columns - 2)
-                figure = ChessFigure.Knight
+                figure = Logic.Knight
             else if(column == 2 || column == GameBoard.columns - 3)
-                figure = ChessFigure.Bishop
+                figure = Logic.Bishop
             else if(column == 3)
-                figure = ChessFigure.Queen
+                figure = Logic.Queen
             else if(column == 4)
-                figure = ChessFigure.King
+                figure = Logic.King
             else
                 return;
         }
@@ -99,27 +97,27 @@ Item {
         var path = "";
 
         switch(figure) {
-        case ChessFigure.Pawn:
+        case Logic.Pawn:
             path = "pawn";
             break;
 
-        case ChessFigure.Bishop:
+        case Logic.Bishop:
             path = "bishop";
             break;
 
-        case ChessFigure.King:
+        case Logic.King:
             path = "king";
             break;
 
-        case ChessFigure.Knight:
+        case Logic.Knight:
             path = "knight";
             break;
 
-        case ChessFigure.Queen:
+        case Logic.Queen:
             path = "queen";
             break;
 
-        case ChessFigure.Rook:
+        case Logic.Rook:
             path = "rook";
             break;
 
@@ -127,6 +125,6 @@ Item {
             return path;
         }
 
-        return "image/" + path + "_" + (side == ChessSide.White ? "white" : "black") + ".png";
+        return "image/" + path + "_" + (side == Logic.White ? "white" : "black") + ".png";
     }
 }

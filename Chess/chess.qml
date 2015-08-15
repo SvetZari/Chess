@@ -2,6 +2,10 @@ import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtQuick.Window 2.2
 
+import Logic 1.0
+import Figure 1.0
+
+
 import "gameboard.js" as GameBoard
 
 ApplicationWindow {
@@ -9,6 +13,10 @@ ApplicationWindow {
     title: "Chess"
     width: 630; height: 670;
     visible: true
+
+    Connections {
+      target: controller
+    }
 
     Rectangle {
         id: screen
@@ -33,6 +41,17 @@ ApplicationWindow {
                 width: window.width - 40; height: window.height - 80;
                 anchors.centerIn: parent
 
+                Item
+                {
+                    id: currentMove
+                    property int fromRow: -1
+                    property int fromColumn: -1
+                    property int toRow: -1
+                    property int toColumn: -1
+                    property int figure: -1
+                    property int side: -1
+                }
+
                 Rectangle {
                     anchors.fill: parent
                     Grid {
@@ -53,14 +72,26 @@ ApplicationWindow {
 
                                     BoardPlate
                                     {
+                                        id: boardPlate
                                         anchors.fill: parent
                                         row: dataModel.row
                                         column: dataModel.column
-                                        index: dataModel.index
 
-                                        MouseArea {
-                                            anchors.fill: parent
-                                            onClicked: console.log(modelData.row);
+                                        onFigureEntered:
+                                        {
+                                            currentMove.toRow = dataModel.row;
+                                            currentMove.toColumn = dataModel.column;
+
+                                            controller.isAllowed(currentMove.toRow,
+                                                               currentMove.toColumn,
+                                                               currentMove.figure,
+                                                               currentMove.side)
+                                        }
+
+                                        onFigureExited:
+                                        {
+                                            currentMove.toRow = -1;
+                                            currentMove.toColumn = -1;
                                         }
                                     }
                                 }
@@ -85,17 +116,33 @@ ApplicationWindow {
                                     height: screen.getSize();
                                     property var dataModel: chessManPack.model[index]
 
+                                    Text
+                                    {
+                                        text: chessFigure.row + " " + chessFigure.column
+                                    }
+
                                     GameFigure
                                     {
                                         id: chessFigure
                                         anchors.fill: parent
                                         row: dataModel.row
                                         column: dataModel.column
-                                        index: dataModel.index
 
-                                        MouseArea {
-                                            anchors.fill: parent
-                                            onClicked: console.log(chessFigure.figure);
+                                        onDragStarted:
+                                        {
+                                            currentMove.figure = chessFigure.figure;
+                                            currentMove.side = chessFigure.side;
+                                            currentMove.fromColumn = chessFigure.column;
+                                            currentMove.fromRow = chessFigure.row;
+                                        }
+
+                                        onDragFinished:
+                                        {
+                                            if(currentMove.toRow > -1 && currentMove.toColumn > -1)
+                                            controller.logMove(currentMove.toRow,
+                                                               currentMove.toColumn,
+                                                               currentMove.figure,
+                                                               currentMove.side)
                                         }
                                     }
                                 }
@@ -116,7 +163,13 @@ ApplicationWindow {
                 anchors.fill: parent
 
                 btnStart.onClicked: {
-                    chessManPack.model = GameBoard.getChessManModel();
+                    controller.initChessman();
+                    chessManPack.model = "";
+                    chessManPack.model = controller.chessman;
+                }
+
+                btnSave.onClicked:
+                {
                 }
             }
         }

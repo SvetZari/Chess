@@ -10,10 +10,10 @@ Item
     property alias btnStart: btnStart
     property alias btnLoad: btnLoad
 
-    property alias bntStop: bntStop
+    property alias btnStop: btnStop
     property alias btnSave: btnSave
 
-    property alias bntPrev: bntPrev
+    property alias btnPrev: btnPrev
     property alias btnNext: btnNext
 
     RowLayout {
@@ -59,7 +59,7 @@ Item
             visible: false
 
             Button {
-                id: bntStop
+                id: btnStop
                 text: qsTr("Stop")
                 anchors { left: parent.left; verticalCenter: parent.verticalCenter }
                 onClicked: {
@@ -83,7 +83,7 @@ Item
             visible: false
 
             Button {
-                id: bntPrev
+                id: btnPrev
                 text: qsTr("Prev")
                 anchors { left: parent.left; verticalCenter: parent.verticalCenter }
             }
