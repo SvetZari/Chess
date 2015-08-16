@@ -31,14 +31,11 @@ signals:
     void currentmoveChanged();
 
 public slots:
-    bool isAllowed(QObject *move) {
+    bool allowed(QObject *move) {
         ChessMove *chessmove = qobject_cast<ChessMove*>(move);
         if(chessmove != 0) {
 
-
-            qDebug() << "is allowed" << chessmove->rowFrom() << chessmove->columnFrom() << " - > "
-                     << chessmove->rowTo() << chessmove->columnTo() << chessmove->figure() << chessmove->side();
-
+            return chessmove->allowed();
         }
     }
 
@@ -81,44 +78,9 @@ private:
     ChessMove* m_currentmove;
     QList<ChessMove*> m_chessmoves;
 
-    int index (int row, int column) {
-        return column + (row * MAX_COLUMNS);
-    }
-
-    int findChessMan(const int row, const int column) {
-        foreach (QObject* figure, m_chessman) {
-            AbstractFigure *abstractFigure = qobject_cast<AbstractFigure*>(figure);
-            if(abstractFigure != 0) {
-                if(abstractFigure->row() == row && abstractFigure->column() == column)
-                    return m_chessman.indexOf(figure);
-            }
-        }
-
-        return -1;
-    }
-
-    void moveChessMan()
-    {
-        auto from = findChessMan(m_currentmove->rowFrom(), m_currentmove->columnFrom());
-        qDebug() << "from" << from;
-
-        auto to = findChessMan(m_currentmove->rowTo(), m_currentmove->columnTo());
-        qDebug() << "to" << to;
-
-        if(from == to)
-            return;
-
-
-        AbstractFigure *abstractFigure = qobject_cast<AbstractFigure*>(m_chessman[from]);
-        if(abstractFigure != 0) {
-            abstractFigure->setRow(m_currentmove->rowTo());
-            abstractFigure->setColumn(m_currentmove->columnTo());
-            m_chessman[to] = abstractFigure;
-            m_chessman[from] = new AbstractFigure(m_currentmove->rowFrom(), m_currentmove->columnFrom());
-        }
-
-    }
+    int index (const int row, const int column);
+    int findChessMan(const int row, const int column);
+    void moveChessMan();
 };
-
 
 #endif // LOGICCONTROLLER_H

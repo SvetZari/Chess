@@ -17,21 +17,10 @@ class AbstractFigure : public QObject
 
     Q_ENUMS(Figure)
     Q_ENUMS(Side)
-public:
-    explicit AbstractFigure() {
-        m_row = -1;
-        m_column = -1;
-        m_side = None;
-        m_figure = Empty;
-    }
 
-    explicit AbstractFigure(int row, int column, bool newGame = false) {
-        m_row = row;
-        m_column = column;
-        m_side = None;
-        m_figure = Empty;
-        if(newGame) init();
-    }
+public:
+    explicit AbstractFigure();
+    explicit AbstractFigure(int row, int column, bool initialize = false);
 
     enum Figure { Empty = -1, King, Queen, Rook, Bishop, Knight, Pawn };
     enum Side { None = -1, White, Black };
@@ -43,57 +32,13 @@ signals:
     void figureChanged();
 
 public slots:
-
-    int row() const {
-        return m_row;
-    }
-
-    int column() const {
-        return m_column;
-    }
-
-    void setRow(int row) {
-        m_row = row;
-        emit rowChanged();
-    }
-
-    void setColumn(int column) {
-       m_column = column;
-       emit columnChanged();
-    }
-
-    Side side() {
-        return m_side;
-    }
-
-    Figure figure() {
-        return m_figure;
-    }
-
-    // 1 king, 1 queen, 2 rook, 2 bishop, 2 knight, 8 pawn
-    void init() {
-        if(m_row == 0 || m_row == 1)
-            m_side = Side::Black;
-        else if(m_row == MAX_ROWS - 1 || m_row == MAX_ROWS - 2)
-            m_side = Side::White;
-        else return;
-
-        if(m_row == 1 || m_row == MAX_ROWS - 2)
-            m_figure = Figure::Pawn;
-        else {
-            if(m_column == 0 || m_column == MAX_COLUMNS - 1)
-                m_figure = Figure::Rook;
-            else if(m_column == 1 || m_column == MAX_COLUMNS - 2)
-                m_figure = Figure::Knight;
-            else if(m_column == 2 || m_column == MAX_COLUMNS - 3)
-                m_figure = Figure::Bishop;
-            else if(m_column == 3)
-                m_figure = Figure::Queen;
-            else if(m_column == 4)
-                m_figure = Figure::King;
-            else return;
-        }
-    }
+    int row() const;
+    int column() const;
+    void setRow(int row);
+    void setColumn(int column);
+    Side side();
+    Figure figure();
+    void init();
 
 private:
     Side m_side;

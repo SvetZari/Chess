@@ -1,13 +1,14 @@
 #ifndef CHESSMOVE_H
 #define CHESSMOVE_H
 
+#include "model/abstractfigure.h"
+
 #include <QObject>
 
 class ChessMove : public QObject
 {
     Q_OBJECT
 public:
-    //ChessMove(){}
     explicit ChessMove(QObject *parent = 0) : QObject(parent) {
         clear();
     }
@@ -19,6 +20,8 @@ public:
     Q_PROPERTY(int side READ side WRITE setSide NOTIFY figureChanged)
     Q_PROPERTY(int figure READ figure WRITE setFigure NOTIFY sideChanged)
 
+    enum Direction {Top, Bottom, Right, Left, TopRight, TopLeft, BottomRight, BottomLeft};
+
 signals:
     void rowToChanged();
     void columnToChanged();
@@ -28,74 +31,24 @@ signals:
     void sideChanged();
 
 public slots:
-    int rowTo() {
-        return m_rowTo;
-    }
+    int rowTo();
+    int rowFrom();
+    int columnTo();
+    int columnFrom();
+    int figure();
+    int side();
 
-    int rowFrom() {
-        return m_rowFrom;
-    }
+    void setRowTo(int rowTo);
+    void setRowFrom(int rowFrom);
+    void setColumnTo(int columnTo);
+    void setColumnFrom(int columnFrom);
+    void setFigure(int figure);
+    void setSide(int side);
 
-    int columnTo() {
-        return m_columnTo;
-    }
-
-    int columnFrom() {
-        return m_columnFrom;
-    }
-
-    int figure() {
-        return m_figure;
-    }
-
-    int side() {
-        return m_side;
-    }
-
-    void setRowTo(int rowTo) {
-        m_rowTo = rowTo;
-        emit rowToChanged();
-    }
-
-    void setRowFrom(int rowFrom) {
-        m_rowFrom = rowFrom;
-        emit rowFromChanged();
-    }
-
-    void setColumnTo(int columnTo) {
-        m_columnTo = columnTo;
-        emit columnToChanged();
-    }
-
-    void setColumnFrom(int columnFrom) {
-        m_columnFrom = columnFrom;
-        emit columnFromChanged();
-    }
-
-    void setFigure(int figure) {
-        m_figure = figure;
-        emit figureChanged();
-    }
-
-    void setSide(int side) {
-        m_side = side;
-        emit sideChanged();
-    }
-
-    bool invalid() {
-        return (m_rowTo < 0 || m_columnTo < 0
-           || m_rowFrom < 0 || m_columnFrom < 0);
-    }
-
-    void clear()
-    {
-        m_rowFrom = -1;
-        m_rowTo = -1;
-        m_columnFrom = -1;
-        m_columnTo = -1;
-        m_figure = -1;
-        m_side = -1;
-    }
+    bool invalid();
+    void clear();
+    bool moved();
+    bool allowed();
 
 private:
     int m_rowFrom;
@@ -104,8 +57,8 @@ private:
     int m_columnTo;
     int m_figure;
     int m_side;
-};
 
-//Q_DECLARE_METATYPE(ChessMove)
+    int distance(Direction direction);
+};
 
 #endif // CHESSMOVE_H

@@ -75,20 +75,12 @@ ApplicationWindow {
                                         column: dataModel.column
 
                                         onFigureEntered: {
-                                            console.log("onFigureEntered");
                                             currentMove.rowTo = dataModel.row;
                                             currentMove.columnTo = dataModel.column;
-
-                                            controller.isAllowed(currentMove);
-                                            /*controller.isAllowed(currentMove.rowTo,
-                                                               currentMove.columnTo,
-                                                               currentMove.figure,
-                                                               currentMove.side)
-                                                               */
+                                            dropAllowed = controller.allowed(currentMove)
                                         }
 
                                         onFigureExited: {
-                                            console.log("onFigureExited");
                                             currentMove.rowTo = -1;
                                             currentMove.columnTo = -1;
                                         }
@@ -124,7 +116,6 @@ ApplicationWindow {
                                         side: dataModel.side
 
                                         onDragStarted: {
-                                            console.log("onDragStarted");
                                             currentMove.clear();
                                             currentMove.figure = chessFigure.figure;
                                             currentMove.side = chessFigure.side;
@@ -133,9 +124,10 @@ ApplicationWindow {
                                         }
 
                                         onDragFinished: {
-                                            console.log("onDragFinished");
-                                            if(!currentMove.invalid())
-                                                controller.setCurrentMove(currentMove);
+                                             if(controller.allowed(currentMove))
+                                                 controller.setCurrentMove(currentMove);
+                                             else
+                                                currentMove.clear();
                                         }
                                     }
                                 }
@@ -162,9 +154,12 @@ ApplicationWindow {
                     chessManPack.active = true;
                 }
 
-                btnSave.onClicked:
-                {
-                    controller.move(0,0,4,4);
+                btnSave.onClicked: {
+
+                }
+
+                btnStop.onClicked:  {
+                    chessManPack.active = false;
                 }
             }
         }
