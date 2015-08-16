@@ -9,7 +9,6 @@
 
 void initQmlTypes()
 {
-
     qmlRegisterType<LogicController>("Chess.Logic", 1, 0, "Logic");
     qmlRegisterType<AbstractFigure>("Chess.Figure", 1, 0, "Figure");
     qmlRegisterType<ChessMove>("Chess.Move", 1, 0, "Move");

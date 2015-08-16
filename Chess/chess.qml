@@ -1,6 +1,8 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.3
 import QtQuick.Window 2.2
+import QtQuick.Dialogs 1.0
+
 import Chess.Logic 1.0
 import Chess.Figure 1.0
 import Chess.Move 1.0
@@ -148,18 +150,31 @@ ApplicationWindow {
                 anchors.fill: parent
 
                 btnStart.onClicked: {
+                    controller.clear();
                     controller.initChessman();
                     chessManPack.active = false;
                     chessManPack.model = controller.chessman;
                     chessManPack.active = true;
                 }
 
+                btnStop.onClicked:  {
+                    chessManPack.active = false;
+                }
+
                 btnSave.onClicked: {
 
                 }
 
-                btnStop.onClicked:  {
-                    chessManPack.active = false;
+                btnLoad.onClicked: {
+
+                }
+
+                btnPrev.onClicked: {
+
+                }
+
+                btnNext.onClicked: {
+
                 }
             }
         }
