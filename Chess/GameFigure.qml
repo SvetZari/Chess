@@ -1,7 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.3
-
-import Logic 1.0
+import Chess.Figure 1.0
 
 import "gameboard.js" as GameBoard
 
@@ -15,8 +14,8 @@ Item {
     property int row: -1
     property int index: -1
 
-    property int figure: Logic.Pawn
-    property int side: Logic.White
+    property int figure: Figure.Pawn
+    property int side: Figure.White
 
     property var lastRoot: root
 
@@ -27,6 +26,7 @@ Item {
         drag.target: tile
         onReleased: root.dragFinished()
         onPressed: root.dragStarted()
+
 
         Rectangle {
             id: tile
@@ -40,10 +40,9 @@ Item {
             Drag.hotSpot.x: 32
             Drag.hotSpot.y: 32
 
-
             Image  {
                 id: image
-                source: ""
+                source: loadImage(figure, side);
                 fillMode: Image.PreserveAspectFit
                 anchors.fill: parent
                 anchors.margins: 2
@@ -51,80 +50,22 @@ Item {
 
             states: State {
                 when: mouseArea.drag.active
-                ParentChange { target: tile; parent: root }
                 AnchorChanges { target: tile; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
             }
         }
     }
 
-    /*
-    1 king
-    1 queen
-    2 rook
-    2 bishop
-    2 knight
-    8 pawn
-    */
-    function init() {
-        if(row == 0 || row == 1)
-            side = Logic.Black;
-        else if(row == GameBoard.rows - 1 || row == GameBoard.rows - 2)
-            side = Logic.White
-        else
-            return;
-
-        if(row == 1 || row == GameBoard.rows - 2)
-            figure = Logic.Pawn
-        else {
-            if(column == 0 || column == GameBoard.columns - 1)
-                figure = Logic.Rook
-            else if(column == 1 || column == GameBoard.columns - 2)
-                figure = Logic.Knight
-            else if(column == 2 || column == GameBoard.columns - 3)
-                figure = Logic.Bishop
-            else if(column == 3)
-                figure = Logic.Queen
-            else if(column == 4)
-                figure = Logic.King
-            else
-                return;
-        }
-
-        image.source = getImageSource(figure, side);
-    }
-
-    function getImageSource(figure, side) {
+    function loadImage(figure, side) {
         var path = "";
-
         switch(figure) {
-        case Logic.Pawn:
-            path = "pawn";
-            break;
-
-        case Logic.Bishop:
-            path = "bishop";
-            break;
-
-        case Logic.King:
-            path = "king";
-            break;
-
-        case Logic.Knight:
-            path = "knight";
-            break;
-
-        case Logic.Queen:
-            path = "queen";
-            break;
-
-        case Logic.Rook:
-            path = "rook";
-            break;
-
-        default:
-            return path;
+            case Figure.Pawn: path = "pawn"; break;
+            case Figure.Bishop: path = "bishop"; break;
+            case Figure.King: path = "king"; break;
+            case Figure.Knight: path = "knight"; break;
+            case Figure.Queen: path = "queen"; break;
+            case Figure.Rook: path = "rook"; break;
+            default: return path;
         }
-
-        return "image/" + path + "_" + (side == Logic.White ? "white" : "black") + ".png";
+        return "image/" + path + "_" + (side === Figure.White ? "white" : "black") + ".png";
     }
 }

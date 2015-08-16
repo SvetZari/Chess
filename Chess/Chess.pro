@@ -1,14 +1,19 @@
 TEMPLATE = app
 
+CONFIG += c++11
+
 QT += qml quick widgets
 
 SOURCES += main.cpp \
     model/abstractfigure.cpp \
-    logiccontroller.cpp
+    logiccontroller.cpp \
+    chessmove.cpp
 
 HEADERS += \
     model/abstractfigure.h \
-    logiccontroller.h
+    logiccontroller.h \
+    chessmove.h \
+    model/defines.h
 
 RESOURCES += qml.qrc
 

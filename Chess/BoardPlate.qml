@@ -8,12 +8,11 @@ Item {
 
     property int column: -1
     property int row: -1
-    property int index: -1
 
     Rectangle {
         id: plate
         anchors.fill: parent
-        color: (column + row) % 2 != 0 ? "lightGray" : "darkGray"
+        color: (column + row) % 2 == 0 ? "lightGray" : "darkGray"
     }
 
     DropArea {
