@@ -162,11 +162,11 @@ ApplicationWindow {
                 }
 
                 btnSave.onClicked: {
-
+                    controller.saveGame();
                 }
 
                 btnLoad.onClicked: {
-
+                    controller.loadGame();
                 }
 
                 btnPrev.onClicked: {

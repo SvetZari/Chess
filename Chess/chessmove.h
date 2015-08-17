@@ -20,7 +20,8 @@ public:
     Q_PROPERTY(int side READ side WRITE setSide NOTIFY figureChanged)
     Q_PROPERTY(int figure READ figure WRITE setFigure NOTIFY sideChanged)
 
-    enum Direction {Top, Bottom, Right, Left, TopRight, TopLeft, BottomRight, BottomLeft};
+    friend QDataStream &operator<<(QDataStream &data, const ChessMove &move);
+    friend QDataStream &operator>>(QDataStream &data, ChessMove &move);
 
 signals:
     void rowToChanged();
@@ -58,7 +59,23 @@ private:
     int m_figure;
     int m_side;
 
+    enum Direction {Top, Bottom, Right, Left, TopRight, TopLeft, BottomRight, BottomLeft};
+
     int distance(Direction direction);
 };
+
+inline QDataStream &operator<<(QDataStream &data, const ChessMove &move) {
+    data << move.m_rowFrom << move.m_columnFrom
+         << move.m_rowTo << move.m_columnTo
+         << move.m_figure << move.m_side;
+    return data;
+}
+
+inline QDataStream &operator>>(QDataStream &data, ChessMove &move) {
+    data >> move.m_rowFrom >> move.m_columnFrom
+         >> move.m_rowTo >> move.m_columnTo
+         >> move.m_figure >> move.m_side;
+    return data;
+}
 
 #endif // CHESSMOVE_H

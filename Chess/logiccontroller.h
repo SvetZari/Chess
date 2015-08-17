@@ -7,6 +7,8 @@
 
 #include <QDebug>
 #include <QObject>
+#include <QFile>
+#include <QStandardPaths>
 #include <QQmlEngine>
 #include <QQmlListProperty>
 
@@ -15,46 +17,102 @@ class LogicController : public QObject
     Q_OBJECT
 
     Q_PROPERTY(QList<QObject*> chessman READ chessman NOTIFY chessmanChanged)
-    Q_PROPERTY(QObject* currentmove READ currentmove WRITE setCurrentMove NOTIFY currentmoveChanged)
 
 public:
     explicit LogicController(QObject *parent = 0)
         : QObject(parent) {
         initChessman();
-        m_currentmove = new ChessMove();
     }
 
 signals:
     void chessmanChanged();
-    void currentmoveChanged();
 
 public slots:
     QList<QObject*> chessman();
-    QObject* currentmove();
 
     bool allowed(QObject *move);
     void initChessman();
     void setCurrentMove(QObject *move);
     void clear();
 
-    void saveGame(QString path)
-    {
+    void processNextMove() {
+        if(m_chessmoves.count() >= m_current) {
+            moveChessMan(m_chessmoves.at(m_current));
+            m_current++;
+        }
+    }
+
+    void processPrevMove() {
 
     }
 
-    void loadGame(QString path)
+    void saveGame()
     {
+        QFile file(m_gamesave);
+        auto result = file.open(QIODevice::ReadWrite);
+        if(!result) {
+            qDebug() << "Something wrong. Can't open file.";
+            return;
+        }
 
+        file.resize(0);
+        QDataStream dataStream(&file);
+
+        int count = m_chessmoves.count();
+        dataStream << count;
+
+        foreach (const ChessMove* move, m_chessmoves)
+            dataStream << *move;
+
+        file.flush();
+        file.close();
+    }
+
+    void loadGame()
+    {
+        QFile file(m_gamesave);
+        if(!file.exists()) {
+            qDebug() << "Something wrong. File doesn't exist.";
+            return;
+        }
+
+        auto result = file.open(QFile::ReadOnly);
+        if(!result) {
+            qDebug() << "Something wrong. Can't open file.";
+            return;
+        }
+
+        m_chessmoves.clear();
+        m_chessman.clear();
+        QDataStream dataStream(&file);
+
+        int count;
+        dataStream >> count;
+
+        for (int i = 0; i < count; i++) {
+            ChessMove move;
+            dataStream >> move;
+            m_chessmoves.append(&move);
+        }
+
+        file.close();
+
+        initChessman();
+
+        processNextMove();
     }
 
 private:
     QList<QObject*> m_chessman;
-    ChessMove* m_currentmove;
     QList<ChessMove*> m_chessmoves;
+    int m_current = 0;
 
     int index(const int row, const int column);
     int findChessMan(const int row, const int column);
-    void moveChessMan();
+    void moveChessMan(ChessMove *move);
+
+    const QString m_gamesave
+        = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/gamesave.hss";
 };
 
 #endif // LOGICCONTROLLER_H

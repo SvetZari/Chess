@@ -18,6 +18,7 @@ void LogicController::initChessman()
             m_chessman.append(new AbstractFigure(row,column,true));
         }
     }
+    emit chessmanChanged();
 }
 
 QList<QObject *> LogicController::chessman() {
@@ -28,40 +29,15 @@ QList<QObject *> LogicController::chessman() {
     return m_chessman;
 }
 
-QObject *LogicController::currentmove() {
-    return m_currentmove;
-}
-
 void LogicController::setCurrentMove(QObject *move) {
     ChessMove *chessmove = qobject_cast<ChessMove*>(move);
     if(chessmove != 0) {
-        m_currentmove = chessmove;
         //qDebug() << "new pos" << chessmove->rowTo() << chessmove->columnTo() << chessmove->figure() << chessmove->side();
-
-        //
         qDebug() << m_chessmoves.count();
         m_chessmoves.append(chessmove);
 
-        moveChessMan();
+        moveChessMan(chessmove);
 
-        emit currentmoveChanged();
-        emit chessmanChanged();
-    }
-}
-
-void LogicController::setCurrentMove(QObject *move) {
-    ChessMove *chessmove = qobject_cast<ChessMove*>(move);
-    if(chessmove != 0) {
-        m_currentmove = chessmove;
-        //qDebug() << "new pos" << chessmove->rowTo() << chessmove->columnTo() << chessmove->figure() << chessmove->side();
-
-        //
-        qDebug() << m_chessmoves.count();
-        m_chessmoves.append(chessmove);
-
-        moveChessMan();
-
-        emit currentmoveChanged();
         emit chessmanChanged();
     }
 }
@@ -85,10 +61,10 @@ int LogicController::findChessMan(const int row, const int column) {
     return -1;
 }
 
-void LogicController::moveChessMan()
+void LogicController::moveChessMan(ChessMove *move)
 {
-    auto from = findChessMan(m_currentmove->rowFrom(), m_currentmove->columnFrom());
-    auto to = findChessMan(m_currentmove->rowTo(), m_currentmove->columnTo());
+    auto from = findChessMan(move->rowFrom(), move->columnFrom());
+    auto to = findChessMan(move->rowTo(), move->columnTo());
     if(from == to) return;
 
     AbstractFigure *figureTo = qobject_cast<AbstractFigure*>(m_chessman[to]);
@@ -100,8 +76,8 @@ void LogicController::moveChessMan()
     if(figureFrom->side() == figureTo->side())
         return;
 
-    figureFrom->setRow(m_currentmove->rowTo());
-    figureFrom->setColumn(m_currentmove->columnTo());
+    figureFrom->setRow(move->rowTo());
+    figureFrom->setColumn(move->columnTo());
     m_chessman[to] = figureFrom;
-    m_chessman[from] = new AbstractFigure(m_currentmove->rowFrom(), m_currentmove->columnFrom());
+    m_chessman[from] = new AbstractFigure(move->rowFrom(), move->columnFrom());
 }
