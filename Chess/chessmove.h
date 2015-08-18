@@ -13,6 +13,11 @@ public:
         clear();
     }
 
+    explicit ChessMove(int rowFrom, int rowTo, int columnFrom, int columnTo, int figure, int side, QObject *parent = 0) :
+        m_rowFrom(rowFrom), m_rowTo(rowTo), m_columnFrom(columnFrom)
+      , m_columnTo(columnTo), m_figure(figure), m_side(side), QObject(parent) {
+    }
+
     Q_PROPERTY(int rowTo READ rowTo WRITE setRowTo NOTIFY rowToChanged)
     Q_PROPERTY(int columnTo READ columnTo WRITE setColumnTo NOTIFY columnToChanged)
     Q_PROPERTY(int rowFrom READ rowFrom WRITE setRowFrom NOTIFY rowFromChanged)
@@ -65,16 +70,16 @@ private:
 };
 
 inline QDataStream &operator<<(QDataStream &data, const ChessMove &move) {
-    data << move.m_rowFrom << move.m_columnFrom
-         << move.m_rowTo << move.m_columnTo
+    data << move.m_rowFrom << move.m_rowTo
+         << move.m_columnFrom << move.m_columnTo
          << move.m_figure << move.m_side;
     return data;
 }
 
 inline QDataStream &operator>>(QDataStream &data, ChessMove &move) {
-    data >> move.m_rowFrom >> move.m_columnFrom
-         >> move.m_rowTo >> move.m_columnTo
-         >> move.m_figure >> move.m_side;
+    data >> move.m_rowFrom >> move.m_rowTo
+            >> move.m_columnFrom >> move.m_columnTo
+            >> move.m_figure >> move.m_side;
     return data;
 }
 

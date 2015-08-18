@@ -30,14 +30,16 @@ QList<QObject *> LogicController::chessman() {
 }
 
 void LogicController::setCurrentMove(QObject *move) {
-    ChessMove *chessmove = qobject_cast<ChessMove*>(move);
+    ChessMove* chessmove = qobject_cast<ChessMove*>(move);
     if(chessmove != 0) {
         //qDebug() << "new pos" << chessmove->rowTo() << chessmove->columnTo() << chessmove->figure() << chessmove->side();
         qDebug() << m_chessmoves.count();
-        m_chessmoves.append(chessmove);
+        ChessMove* nextMove
+                = new ChessMove(chessmove->rowFrom(), chessmove->rowTo(), chessmove->columnFrom(), chessmove->columnTo()
+                    , chessmove->figure(), chessmove->side());
 
+        m_chessmoves.append(nextMove);
         moveChessMan(chessmove);
-
         emit chessmanChanged();
     }
 }

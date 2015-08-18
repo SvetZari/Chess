@@ -36,6 +36,14 @@ public slots:
     void clear();
 
     void processNextMove() {
+        qDebug() << "cur" << m_current;
+        for (int i = 0; i < m_chessmoves.count(); i++) {
+           qDebug() << "next move" << m_chessmoves[i]->rowFrom()
+                    << m_chessmoves[i]->rowTo()
+                    << m_chessmoves[i]->columnFrom()
+                    << m_chessmoves[i]->columnTo();
+        }
+
         if(m_chessmoves.count() >= m_current) {
             moveChessMan(m_chessmoves.at(m_current));
             m_current++;
@@ -61,7 +69,8 @@ public slots:
         int count = m_chessmoves.count();
         dataStream << count;
 
-        foreach (const ChessMove* move, m_chessmoves)
+
+        foreach (const ChessMove *move, m_chessmoves)
             dataStream << *move;
 
         file.flush();
@@ -82,24 +91,32 @@ public slots:
             return;
         }
 
-        m_chessmoves.clear();
-        m_chessman.clear();
+        clear();
+        initChessman();
         QDataStream dataStream(&file);
 
         int count;
         dataStream >> count;
 
+
+        m_current = 0;
         for (int i = 0; i < count; i++) {
-            ChessMove move;
-            dataStream >> move;
-            m_chessmoves.append(&move);
+            ChessMove* move = new ChessMove();
+            dataStream >> *move;
+
+            m_chessmoves.append(move);
+
         }
 
         file.close();
 
         initChessman();
 
-        processNextMove();
+
+        while (m_current < m_chessmoves.count())
+            processNextMove();
+
+        emit chessmanChanged();
     }
 
 private:
