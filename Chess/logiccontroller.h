@@ -36,35 +36,73 @@ public slots:
     void clear();
 
     void processNextMove() {
-        qDebug() << "cur" << m_current;
-        for (int i = 0; i < m_chessmoves.count(); i++) {
-           qDebug() << "next move" << m_chessmoves[i]->rowFrom()
-                    << m_chessmoves[i]->rowTo()
-                    << m_chessmoves[i]->columnFrom()
-                    << m_chessmoves[i]->columnTo();
-        }
-
+        if(m_chessmoves.count() > m_currentMove) {
+            moveChessNext(m_chessmoves.at(m_currentMove));
+            m_currentMove++;
         }
     }
 
+    void processPrevMove() {
+        if(m_currentMove > 0) {
+            m_currentMove--;
+            moveChessPrev(m_chessmoves.at(m_currentMove));
+        }
+    }
 
+    void saveGame();
+    void loadGame();
 
+private:
+    QList<QObject*> m_chessman;
+    QList<ChessMove*> m_chessmoves;
+    int m_currentMove = 0;
+
+    int index(const int row, const int column);
+    int findChessMan(const int row, const int column);
+    void moveChessNext(ChessMove *move)
     {
+        auto from = findChessMan(move->rowFrom(), move->columnFrom());
+        auto to = findChessMan(move->rowTo(), move->columnTo());
 
+        qDebug() << "from " << from << "to" << to;
 
+        if(from == to) return;
 
+        AbstractFigure *figureTo = qobject_cast<AbstractFigure*>(m_chessman[to]);
+        if(figureTo == 0) return;
 
+        AbstractFigure *figureFrom = qobject_cast<AbstractFigure*>(m_chessman[from]);
+        if(figureFrom == 0) return;
 
+        if(figureFrom->side() == figureTo->side())
             return;
 
+        m_chessman[to] = new AbstractFigure(move->rowTo(), move->columnTo(), (t_Side)move->side(), (t_Figure)move->figure());
+        m_chessman[from] = new AbstractFigure(move->rowFrom(), move->columnFrom());
 
+        emit chessmanChanged();
+    }
 
+    void moveChessPrev(ChessMove *move)
+    {
+        auto to = findChessMan(move->rowFrom(), move->columnFrom());
+        auto from = findChessMan(move->rowTo(), move->columnTo());
 
+        qDebug() << "from " << from << "to" << to;
 
+        if(from == to) return;
 
+        AbstractFigure *figureTo = qobject_cast<AbstractFigure*>(m_chessman[to]);
+        if(figureTo == 0) return;
 
+        AbstractFigure *figureFrom = qobject_cast<AbstractFigure*>(m_chessman[from]);
+        if(figureFrom == 0) return;
 
+        if(figureFrom->side() == figureTo->side())
+            return;
 
+        m_chessman[to] = new AbstractFigure(move->rowFrom(), move->columnFrom(), (t_Side)move->side(), (t_Figure)move->figure());
+        m_chessman[from] = new AbstractFigure(move->rowTo(), move->columnTo());
 
         emit chessmanChanged();
     }
