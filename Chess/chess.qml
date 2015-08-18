@@ -170,11 +170,11 @@ ApplicationWindow {
                 }
 
                 btnPrev.onClicked: {
-
+                    controller.processPrevMove();
                 }
 
                 btnNext.onClicked: {
-
+                    controller.processNextMove();
                 }
             }
         }

@@ -15,6 +15,14 @@ AbstractFigure::AbstractFigure(int row, int column, bool initialize) {
     if(initialize) init();
 }
 
+AbstractFigure::AbstractFigure(int row, int column, Side side, Figure figure) {
+    m_row = row;
+    m_column = column;
+    m_side = side;
+    m_figure = figure;
+    init();
+}
+
 int AbstractFigure::row() const {
     return m_row;
 }

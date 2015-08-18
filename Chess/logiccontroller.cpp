@@ -39,7 +39,7 @@ void LogicController::setCurrentMove(QObject *move) {
                     , chessmove->figure(), chessmove->side());
 
         m_chessmoves.append(nextMove);
-        moveChessMan(chessmove);
+        moveChessNext(chessmove);
         emit chessmanChanged();
     }
 }
@@ -47,6 +47,61 @@ void LogicController::setCurrentMove(QObject *move) {
 void LogicController::clear() {
     m_chessman.clear();
     m_chessmoves.clear();
+    m_currentMove = 0;
+}
+
+void LogicController::saveGame()
+{
+    QFile file(m_gamesave);
+    auto result = file.open(QIODevice::ReadWrite);
+    if(!result) {
+        qDebug() << "Something wrong. Can't open file.";
+        return;
+    }
+
+    file.resize(0);
+    QDataStream dataStream(&file);
+
+    int count = m_chessmoves.count();
+    dataStream << count;
+
+    foreach (const ChessMove *move, m_chessmoves)
+        dataStream << *move;
+
+    file.flush();
+    file.close();
+}
+
+void LogicController::loadGame()
+{
+    QFile file(m_gamesave);
+    if(!file.exists()) {
+        qDebug() << "Something wrong. File doesn't exist.";
+        return;
+    }
+
+    auto result = file.open(QFile::ReadOnly);
+    if(!result) {
+        qDebug() << "Something wrong. Can't open file.";
+        return;
+    }
+
+    clear();
+    initChessman();
+
+    QDataStream dataStream(&file);
+    int count;
+    dataStream >> count;
+
+    for (int i = 0; i < count; i++) {
+        ChessMove* move = new ChessMove();
+        dataStream >> *move;
+        m_chessmoves.append(move);
+        processNextMove();
+    }
+
+    file.close();
+    emit chessmanChanged();
 }
 
 int LogicController::index(const int row, const int column) {
@@ -63,23 +118,4 @@ int LogicController::findChessMan(const int row, const int column) {
     return -1;
 }
 
-void LogicController::moveChessMan(ChessMove *move)
-{
-    auto from = findChessMan(move->rowFrom(), move->columnFrom());
-    auto to = findChessMan(move->rowTo(), move->columnTo());
-    if(from == to) return;
 
-    AbstractFigure *figureTo = qobject_cast<AbstractFigure*>(m_chessman[to]);
-    if(figureTo == 0) return;
-
-    AbstractFigure *figureFrom = qobject_cast<AbstractFigure*>(m_chessman[from]);
-    if(figureFrom == 0) return;
-
-    if(figureFrom->side() == figureTo->side())
-        return;
-
-    figureFrom->setRow(move->rowTo());
-    figureFrom->setColumn(move->columnTo());
-    m_chessman[to] = figureFrom;
-    m_chessman[from] = new AbstractFigure(move->rowFrom(), move->columnFrom());
-}
