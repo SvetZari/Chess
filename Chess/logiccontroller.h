@@ -34,21 +34,8 @@ public slots:
     void initChessman();
     void setCurrentMove(QObject *move);
     void clear();
-
-    void processNextMove() {
-        if(m_chessmoves.count() > m_currentMove) {
-            moveChessNext(m_chessmoves.at(m_currentMove));
-            m_currentMove++;
-        }
-    }
-
-    void processPrevMove() {
-        if(m_currentMove > 0) {
-            m_currentMove--;
-            moveChessPrev(m_chessmoves.at(m_currentMove));
-        }
-    }
-
+    void processNextMove();
+    void processPrevMove();
     void saveGame();
     void loadGame();
 
@@ -59,53 +46,9 @@ private:
 
     int index(const int row, const int column);
     int findChessMan(const int row, const int column);
-    void moveChessNext(ChessMove *move)
-    {
-        auto from = findChessMan(move->rowFrom(), move->columnFrom());
-        auto to = findChessMan(move->rowTo(), move->columnTo());
-
-        qDebug() << "from " << from << "to" << to;
-
-        if(from == to) return;
-
-        AbstractFigure *figureTo = qobject_cast<AbstractFigure*>(m_chessman[to]);
-        if(figureTo == 0) return;
-
-        AbstractFigure *figureFrom = qobject_cast<AbstractFigure*>(m_chessman[from]);
-        if(figureFrom == 0) return;
-
-        if(figureFrom->side() == figureTo->side())
-            return;
-
-        m_chessman[to] = new AbstractFigure(move->rowTo(), move->columnTo(), (t_Side)move->side(), (t_Figure)move->figure());
-        m_chessman[from] = new AbstractFigure(move->rowFrom(), move->columnFrom());
-
-        emit chessmanChanged();
-    }
-
-    void moveChessPrev(ChessMove *move)
-    {
-        auto to = findChessMan(move->rowFrom(), move->columnFrom());
-        auto from = findChessMan(move->rowTo(), move->columnTo());
-
-        qDebug() << "from " << from << "to" << to;
-
-        if(from == to) return;
-
-        AbstractFigure *figureTo = qobject_cast<AbstractFigure*>(m_chessman[to]);
-        if(figureTo == 0) return;
-
-        AbstractFigure *figureFrom = qobject_cast<AbstractFigure*>(m_chessman[from]);
-        if(figureFrom == 0) return;
-
-        if(figureFrom->side() == figureTo->side())
-            return;
-
-        m_chessman[to] = new AbstractFigure(move->rowFrom(), move->columnFrom(), (t_Side)move->side(), (t_Figure)move->figure());
-        m_chessman[from] = new AbstractFigure(move->rowTo(), move->columnTo());
-
-        emit chessmanChanged();
-    }
+    bool checkMove(int from, int to);
+    void moveChessNext(ChessMove *move);
+    void moveChessPrev(ChessMove *move);
 
     const QString m_gamesave
         = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/gamesave.hss";
