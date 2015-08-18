@@ -1,7 +1,7 @@
 #ifndef ABSTRACTFIGURE_H
 #define ABSTRACTFIGURE_H
 
-#include "model/defines.h"
+#include "defines.h"
 
 #include <QObject>
 #include <QDebug>

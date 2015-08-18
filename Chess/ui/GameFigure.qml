@@ -1,5 +1,6 @@
 import QtQuick 2.4
 import QtQuick.Controls 1.3
+
 import Chess.Figure 1.0
 
 import "gameboard.js" as GameBoard
@@ -14,8 +15,8 @@ Item {
     property int row: -1
     property int index: -1
 
-    property int figure: Figure.Pawn
-    property int side: Figure.White
+    property int figure: Figure.Empty
+    property int side: Side.None
 
     property var lastRoot: root
 
@@ -26,7 +27,6 @@ Item {
         drag.target: tile
         onReleased: root.dragFinished()
         onPressed: root.dragStarted()
-
 
         Rectangle {
             id: tile
@@ -50,7 +50,6 @@ Item {
 
             states: State {
                 when: mouseArea.drag.active
-                //ParentChange { target: tile; parent: root }
                 AnchorChanges { target: tile; anchors.verticalCenter: undefined; anchors.horizontalCenter: undefined }
             }
         }
@@ -67,6 +66,6 @@ Item {
             case Figure.Rook: path = "rook"; break;
             default: return path;
         }
-        return "image/" + path + "_" + (side === Figure.White ? "white" : "black") + ".png";
+        return "qrc:/image/" + path + "_" + (side === Figure.White ? "white" : "black") + ".png";
     }
 }

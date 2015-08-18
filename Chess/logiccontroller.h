@@ -1,9 +1,9 @@
 #ifndef LOGICCONTROLLER_H
 #define LOGICCONTROLLER_H
 
-#include "model/defines.h"
+#include "defines.h"
 #include "model/abstractfigure.h"
-#include "chessmove.h"
+#include "model/chessmove.h"
 
 #include <QDebug>
 #include <QObject>
@@ -19,10 +19,7 @@ class LogicController : public QObject
     Q_PROPERTY(QList<QObject*> chessman READ chessman NOTIFY chessmanChanged)
 
 public:
-    explicit LogicController(QObject *parent = 0)
-        : QObject(parent) {
-        initChessman();
-    }
+    explicit LogicController(QObject *parent = 0);
 
 signals:
     void chessmanChanged();
@@ -34,7 +31,7 @@ public slots:
     void initChessman();
     void setCurrentMove(QObject *move);
     void clear();
-    void processNextMove();
+    void processNextMove(bool fast = false);
     void processPrevMove();
     void saveGame();
     void loadGame();
@@ -45,10 +42,12 @@ private:
     int m_currentMove = 0;
 
     int index(const int row, const int column);
-    int findChessMan(const int row, const int column);
-    bool checkMove(int from, int to);
-    void moveChessNext(ChessMove *move);
-    void moveChessPrev(ChessMove *move);
+    int findChessman(const int row, const int column);
+    bool isValidMove(int from, int to);
+    bool checkMoveParity(int side);
+
+    void moveNext(ChessMove *move, bool fast = false);
+    void movePrev(ChessMove *move);
 
     const QString m_gamesave
         = QStandardPaths::writableLocation(QStandardPaths::DownloadLocation) + "/gamesave.hss";

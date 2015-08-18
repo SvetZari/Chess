@@ -6,14 +6,14 @@ QT += qml quick widgets
 
 SOURCES += main.cpp \
     model/abstractfigure.cpp \
-    logiccontroller.cpp \
-    chessmove.cpp
+    model/chessmove.cpp \
+    logiccontroller.cpp
 
 HEADERS += \
     model/abstractfigure.h \
+    model/chessmove.h \
     logiccontroller.h \
-    chessmove.h \
-    model/defines.h
+    defines.h
 
 RESOURCES += qml.qrc
 

@@ -1,5 +1,5 @@
 #include "logiccontroller.h"
-#include "chessmove.h"
+#include "model/chessmove.h"
 #include "model/abstractfigure.h"
 
 #include <QApplication>
@@ -24,7 +24,7 @@ int main(int argc, char *argv[])
 
     LogicController controller;
     ctx->setContextProperty("controller", &controller);
-    engine.load(QUrl(QStringLiteral("qrc:/chess.qml")));
+    engine.load(QUrl(QStringLiteral("qrc:/qml/ui/chess.qml")));
 
     return app.exec();
 }

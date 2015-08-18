@@ -4,6 +4,7 @@ import QtQuick.Layouts 1.1
 
 Item
 {
+    id: root
     width: 400
     height: 40
 
@@ -15,6 +16,8 @@ Item
 
     property alias btnPrev: btnPrev
     property alias btnNext: btnNext
+
+    property bool modeGameSaved: false
 
     RowLayout {
         spacing: 50
@@ -39,6 +42,7 @@ Item
                     menuStart.visible = false;
                     menuGame.visible = true;
                     menuSavedGame.visible = false;
+                    root.modeGameSaved = false;
                 }
             }
 
@@ -48,6 +52,7 @@ Item
                 anchors { right: parent.right; verticalCenter: parent.verticalCenter }
                 onClicked: {
                     menuSavedGame.visible = true;
+                    root.modeGameSaved = true;
                 }
             }
         }

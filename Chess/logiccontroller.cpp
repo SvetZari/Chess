@@ -1,31 +1,31 @@
 #include "logiccontroller.h"
 
-bool LogicController::allowed(QObject *move) {
-    ChessMove *chessmove = qobject_cast<ChessMove*>(move);
-    if(chessmove != 0) {
-
-       if(m_chessmoves.count() > 0)
-           if(m_chessmoves.last()->side() == chessmove->side())
-               return false;
-
-       return chessmove->allowed();
-    }
-}
-
 void LogicController::initChessman()
 {
-    m_chessman.clear();
+    clear();
     for (int row = 0; row < MAX_ROWS; row++) {
         for (int column = 0; column < MAX_COLUMNS; column++) {
-            //QQmlEngine::setObjectOwnership(chessman, QQmlEngine::JavaScriptOwnership);
-            m_chessman.append(new AbstractFigure(row,column,true));
+            m_chessman.append(new AbstractFigure(row, column, true));
         }
     }
     emit chessmanChanged();
 }
 
+LogicController::LogicController(QObject *parent)
+    : QObject(parent) {
+    initChessman();
+}
+
 QList<QObject *> LogicController::chessman() {
     return m_chessman;
+}
+
+bool LogicController::allowed(QObject *move) {
+    ChessMove *chessmove = qobject_cast<ChessMove*>(move);
+    if(chessmove != 0) {
+        return checkMoveParity(chessmove->side()) && chessmove->isAllowed();
+    }
+    return false;
 }
 
 void LogicController::setCurrentMove(QObject *move) {
@@ -33,11 +33,11 @@ void LogicController::setCurrentMove(QObject *move) {
     if(chessmove != 0) {
         ChessMove* nextMove
                 = new ChessMove(chessmove->rowFrom(), chessmove->rowTo(), chessmove->columnFrom(), chessmove->columnTo()
-                    , chessmove->figure(), chessmove->side());
+                    , chessmove->figure(), chessmove->side(), chessmove->prevFigure(), chessmove->prevSide());
 
         m_chessmoves.append(nextMove);
         m_currentMove++;
-        moveChessNext(chessmove);
+        moveNext(chessmove);
         emit chessmanChanged();
     }
 }
@@ -48,9 +48,9 @@ void LogicController::clear() {
     m_currentMove = 0;
 }
 
-void LogicController::processNextMove() {
+void LogicController::processNextMove(bool fast) {
     if(m_chessmoves.count() > m_currentMove) {
-        moveChessNext(m_chessmoves.at(m_currentMove));
+        moveNext(m_chessmoves.at(m_currentMove), fast);
         m_currentMove++;
     }
 }
@@ -58,7 +58,7 @@ void LogicController::processNextMove() {
 void LogicController::processPrevMove() {
     if(m_currentMove > 0) {
         m_currentMove--;
-        moveChessPrev(m_chessmoves.at(m_currentMove));
+        movePrev(m_chessmoves.at(m_currentMove));
     }
 }
 
@@ -109,7 +109,7 @@ void LogicController::loadGame()
         ChessMove* move = new ChessMove();
         dataStream >> *move;
         m_chessmoves.append(move);
-        processNextMove();
+        processNextMove(true);
     }
 
     file.close();
@@ -120,7 +120,7 @@ int LogicController::index(const int row, const int column) {
     return column + (row * MAX_COLUMNS);
 }
 
-int LogicController::findChessMan(const int row, const int column) {
+int LogicController::findChessman(const int row, const int column) {
     foreach (QObject* figure, m_chessman) {
         AbstractFigure *abstractFigure = qobject_cast<AbstractFigure*>(figure);
         if(abstractFigure != 0)
@@ -130,9 +130,8 @@ int LogicController::findChessMan(const int row, const int column) {
     return -1;
 }
 
-bool LogicController::checkMove(int from, int to)
+bool LogicController::isValidMove(int from, int to)
 {
-    qDebug() << "from " << from << "to" << to;
     if(from == to) return false;
 
     AbstractFigure *figureTo = qobject_cast<AbstractFigure*>(m_chessman[to]);
@@ -147,32 +146,47 @@ bool LogicController::checkMove(int from, int to)
     return true;
 }
 
-void LogicController::moveChessNext(ChessMove *move)
+bool LogicController::checkMoveParity(int side)
 {
-    auto from = findChessMan(move->rowFrom(), move->columnFrom());
-    auto to = findChessMan(move->rowTo(), move->columnTo());
+    if(m_chessmoves.empty()) {
+        if(side != t_Side::White)
+            return false;
+    } else {
+        if(m_chessmoves.last()->side() == side)
+            return false;
+    }
+    return true;
+}
 
-    if(!checkMove(from, to))
-        return;
+void LogicController::moveNext(ChessMove *move, bool fast)
+{
+    auto from = findChessman(move->rowFrom(), move->columnFrom());
+    auto to = findChessman(move->rowTo(), move->columnTo());
+    if(!isValidMove(from, to)) return;
 
     AbstractFigure *figureFrom = qobject_cast<AbstractFigure*>(m_chessman[from]);
     if(figureFrom == 0) return;
+
+    AbstractFigure *figureTo = qobject_cast<AbstractFigure*>(m_chessman[to]);
+    if(figureTo == 0) return;
+
+    move->setPrevFigure(figureTo->figure());
+    move->setPrevSide(figureTo->side());
 
     figureFrom->setRow(move->rowTo());
     figureFrom->setColumn(move->columnTo());
     m_chessman[to] = figureFrom;
     m_chessman[from] = new AbstractFigure(move->rowFrom(), move->columnFrom());
 
+    if(!fast)
     emit chessmanChanged();
 }
 
-void LogicController::moveChessPrev(ChessMove *move)
+void LogicController::movePrev(ChessMove *move)
 {
-    auto to = findChessMan(move->rowFrom(), move->columnFrom());
-    auto from = findChessMan(move->rowTo(), move->columnTo());
-
-    if(!checkMove(from, to))
-        return;
+    auto to = findChessman(move->rowFrom(), move->columnFrom());
+    auto from = findChessman(move->rowTo(), move->columnTo());
+    if(!isValidMove(from, to)) return;
 
     AbstractFigure *figureFrom = qobject_cast<AbstractFigure*>(m_chessman[from]);
     if(figureFrom == 0) return;
@@ -180,9 +194,7 @@ void LogicController::moveChessPrev(ChessMove *move)
     figureFrom->setRow(move->rowFrom());
     figureFrom->setColumn(move->columnFrom());
     m_chessman[to] = figureFrom;
-    m_chessman[from] = new AbstractFigure(move->rowTo(), move->columnTo());
+    m_chessman[from] = new AbstractFigure(move->rowTo(), move->columnTo(), (t_Side)move->prevSide(), (t_Figure)move->prevFigure() );
 
     emit chessmanChanged();
 }
-
-

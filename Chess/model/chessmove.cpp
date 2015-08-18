@@ -24,6 +24,14 @@ int ChessMove::side() {
     return m_side;
 }
 
+int ChessMove::prevFigure() {
+    return m_prevFigure;
+}
+
+int ChessMove::prevSide() {
+    return m_prevSide;
+}
+
 void ChessMove::setRowTo(int rowTo) {
     m_rowTo = rowTo;
     emit rowToChanged();
@@ -54,6 +62,16 @@ void ChessMove::setSide(int side) {
     emit sideChanged();
 }
 
+void ChessMove::setPrevFigure(int figure) {
+    m_prevFigure = figure;
+    emit prevFigureChanged();
+}
+
+void ChessMove::setPrevSide(int side) {
+    m_prevSide = side;
+    emit prevSideChanged();
+}
+
 bool ChessMove::invalid() {
     return (m_rowTo < 0 || m_columnTo < 0
             || m_rowFrom < 0 || m_columnFrom < 0);
@@ -71,9 +89,11 @@ void ChessMove::clear()
     m_columnTo = -1;
     m_figure = -1;
     m_side = -1;
+    m_prevFigure = -1;
+    m_prevSide = -1;
 }
 
-bool ChessMove::allowed()
+bool ChessMove::isAllowed()
 {
     if(!moved() || invalid())
         return false;

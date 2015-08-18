@@ -38,18 +38,21 @@ ApplicationWindow {
                 width: window.width - 40; height: window.height - 80;
                 anchors.centerIn: parent
 
+                function reloadModel() {
+                    chessBoardPack.active = false;
+                    chessBoardPack.model = GameBoard.chessBoardModel()
+                    chessBoardPack.active = true;
+
+                    chessManPack.active = false;
+                    chessManPack.model = controller.chessman;
+                    chessManPack.active = true;
+                }
+
                 Move { id: currentMove }
+
                 Connections {
                     target: controller
-                    onChessmanChanged: {
-                        chessBoardPack.active = false;
-                        chessBoardPack.model = GameBoard.chessBoardModel()
-                        chessBoardPack.active = true;
-
-                        chessManPack.active = false;
-                        chessManPack.model = controller.chessman;
-                        chessManPack.active = true;
-                    }
+                    onChessmanChanged: scene.reloadModel();
                 }
 
                 Rectangle {
@@ -79,7 +82,8 @@ ApplicationWindow {
                                         onFigureEntered: {
                                             currentMove.rowTo = dataModel.row;
                                             currentMove.columnTo = dataModel.column;
-                                            dropAllowed = controller.allowed(currentMove)
+
+                                            dropAllowed = (actionMenu.modeGameSaved ? false : controller.allowed(currentMove));
                                         }
 
                                         onFigureExited: {
@@ -106,7 +110,7 @@ ApplicationWindow {
                                     width: screen.getSize(); height: screen.getSize();
                                     property var dataModel: chessManPack.model[index]
 
-                                    Text { text: chessFigure.row + " " + chessFigure.column + " " + index }
+                                    //Text { text: chessFigure.row + " " + chessFigure.column + " " + index }
 
                                     GameFigure
                                     {
@@ -115,7 +119,7 @@ ApplicationWindow {
                                         row: dataModel.row
                                         column: dataModel.column
                                         figure: dataModel.figure
-                                        side: dataModel.side
+                                        side: dataModel.side      
 
                                         onDragStarted: {
                                             currentMove.clear();
@@ -126,7 +130,7 @@ ApplicationWindow {
                                         }
 
                                         onDragFinished: {
-                                             if(controller.allowed(currentMove))
+                                             if(controller.allowed(currentMove) && !actionMenu.modeGameSaved)
                                                  controller.setCurrentMove(currentMove);
                                              else
                                                 currentMove.clear();
@@ -149,33 +153,17 @@ ApplicationWindow {
                 id: actionMenu
                 anchors.fill: parent
 
-                btnStart.onClicked: {
+                btnStart.onClicked:
+                {
                     controller.clear();
                     controller.initChessman();
-                    chessManPack.active = false;
-                    chessManPack.model = controller.chessman;
-                    chessManPack.active = true;
+                    scene.reloadModel();
                 }
-
-                btnStop.onClicked:  {
-                    chessManPack.active = false;
-                }
-
-                btnSave.onClicked: {
-                    controller.saveGame();
-                }
-
-                btnLoad.onClicked: {
-                    controller.loadGame();
-                }
-
-                btnPrev.onClicked: {
-                    controller.processPrevMove();
-                }
-
-                btnNext.onClicked: {
-                    controller.processNextMove();
-                }
+                btnStop.onClicked: chessManPack.active = false;
+                btnSave.onClicked: controller.saveGame();
+                btnLoad.onClicked: controller.loadGame();
+                btnPrev.onClicked: controller.processPrevMove();
+                btnNext.onClicked: controller.processNextMove();
             }
         }
     }
