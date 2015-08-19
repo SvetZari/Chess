@@ -151,7 +151,22 @@ bool LogicController::isValidMove(ChessMove *move)
 }
 
 bool LogicController::isValidTrace(ChessMove *move) {
-    return true;
+
+    switch (move->figure()) {
+    case t_Figure::Pawn:
+    case t_Figure::Rook:
+    case t_Figure::Queen:
+    case t_Figure::Bishop:
+         return validateTrace(move);
+        break;
+
+    case t_Figure::Knight:
+    case t_Figure::King:
+        return true;
+
+    default:
+        return false;
+    }
 }
 
 bool LogicController::checkMoveParity(int side)
@@ -163,6 +178,66 @@ bool LogicController::checkMoveParity(int side)
         if(m_chessmoves.last()->side() == side)
             return false;
     }
+    return true;
+}
+
+bool LogicController::validateTrace(ChessMove *move)
+{
+    auto traceFailed = [&](int index) -> bool {
+        AbstractFigure *figure = qobject_cast<AbstractFigure*>(m_chessman[index]);
+        if (figure == 0) return false;
+        return (figure->figure() != -1);
+    };
+
+    if((move->rowFrom() != move->rowTo() && (move->columnFrom() != move->columnTo())))
+    {
+        auto deltaH = move->rowFrom() - move->rowTo();
+        auto deltaW = move->columnFrom() - move->columnTo();
+        if(abs(deltaH) != abs(deltaW))
+            return false;
+
+        auto delta = abs(deltaH);
+
+        for (int i = 1; i <= delta; i++) {
+            auto rowSign = deltaH > 0 ? -1 : 1;
+            auto columnSign = deltaW > 0 ? -1 : 1;
+            auto index = findChessman(move->rowFrom() + i * rowSign, move->columnFrom() + i * columnSign);
+            if (traceFailed(index)) return false;
+        }
+    }
+    else
+    {
+        if(move->rowFrom() < move->rowTo())
+        {
+            for (int i = move->rowFrom() + 1; i < move->rowTo(); i++) {
+                auto index = findChessman(i, move->columnTo());
+                if (traceFailed(index)) return false;
+            }
+        }
+        else if (move->rowFrom() > move->rowTo())
+        {
+            for (int i = move->rowFrom() - 1; i > move->rowTo(); i--) {
+                auto index = findChessman(i, move->columnTo());
+                if (traceFailed(index)) return false;
+            }
+        }
+
+        if(move->columnFrom() < move->columnTo())
+        {
+            for (int i = move->columnFrom() + 1; i < move->columnTo(); i++) {
+                auto index = findChessman(move->rowTo(), i);
+                if (traceFailed(index)) return false;
+            }
+        }
+        else if (move->columnFrom() > move->columnTo())
+        {
+            for (int i = move->columnFrom() - 1; i > move->columnTo(); i--) {
+                auto index = findChessman(move->rowTo(), i);
+                if (traceFailed(index)) return false;
+            }
+        }
+    }
+
     return true;
 }
 

@@ -47,6 +47,8 @@ private:
     bool isValidTrace(ChessMove *move);
     bool checkMoveParity(int side);
 
+    bool validateTrace(ChessMove *move);
+
     void moveNext(ChessMove *move, bool fast = false);
     void movePrev(ChessMove *move);
 
