@@ -150,8 +150,6 @@ bool LogicController::isValidMove(ChessMove *move)
     switch (move->figure())
     {
     case t_Figure::Pawn:
-        qDebug() << "side" << figureFrom->side() << figureTo->side();
-
         if(figureFrom->side() != figureTo->side() && figureFrom->side() != -1) {
             if((move->rowFrom() != move->rowTo() && (move->columnFrom() != move->columnTo())))
                 return true;
@@ -216,7 +214,7 @@ bool LogicController::validateTrace(ChessMove *move)
 
         auto delta = abs(deltaH);
 
-        for (int i = 1; i <= delta; i++) {
+        for (int i = 1; i < delta; i++) {
             auto rowSign = deltaH > 0 ? -1 : 1;
             auto columnSign = deltaW > 0 ? -1 : 1;
             auto index = findChessman(move->rowFrom() + i * rowSign, move->columnFrom() + i * columnSign);
