@@ -186,7 +186,7 @@ bool LogicController::validateTrace(ChessMove *move)
     auto traceFailed = [&](int index) -> bool {
         AbstractFigure *figure = qobject_cast<AbstractFigure*>(m_chessman[index]);
         if (figure == 0) return false;
-        return (figure->figure() != -1);
+        return (figure->figure() != -1 && figure->figure() != move->figure());
     };
 
     if((move->rowFrom() != move->rowTo() && (move->columnFrom() != move->columnTo())))
