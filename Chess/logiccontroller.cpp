@@ -147,6 +147,24 @@ bool LogicController::isValidMove(ChessMove *move)
     if(figureFrom->side() == figureTo->side())
         return false;
 
+    switch (move->figure())
+    {
+    case t_Figure::Pawn:
+        qDebug() << "side" << figureFrom->side() << figureTo->side();
+
+        if(figureFrom->side() != figureTo->side() && figureFrom->side() != -1) {
+            if((move->rowFrom() != move->rowTo() && (move->columnFrom() != move->columnTo())))
+                return true;
+            else
+            return false;
+        }
+        break;
+
+    default:
+        break;
+    }
+
+
     return true;
 }
 
