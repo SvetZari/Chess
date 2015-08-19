@@ -23,7 +23,8 @@ QList<QObject *> LogicController::chessman() {
 bool LogicController::allowed(QObject *move) {
     ChessMove *chessmove = qobject_cast<ChessMove*>(move);
     if(chessmove != 0) {
-        return checkMoveParity(chessmove->side()) && chessmove->isAllowed();
+        return checkMoveParity(chessmove->side()) && chessmove->isAllowed()
+                && isValidMove(chessmove) && isValidTrace(chessmove);
     }
     return false;
 }
@@ -130,8 +131,11 @@ int LogicController::findChessman(const int row, const int column) {
     return -1;
 }
 
-bool LogicController::isValidMove(int from, int to)
+bool LogicController::isValidMove(ChessMove *move)
 {
+    auto to = findChessman(move->rowFrom(), move->columnFrom());
+    auto from = findChessman(move->rowTo(), move->columnTo());
+
     if(from == to) return false;
 
     AbstractFigure *figureTo = qobject_cast<AbstractFigure*>(m_chessman[to]);
@@ -143,6 +147,10 @@ bool LogicController::isValidMove(int from, int to)
     if(figureFrom->side() == figureTo->side())
         return false;
 
+    return true;
+}
+
+bool LogicController::isValidTrace(ChessMove *move) {
     return true;
 }
 
@@ -160,9 +168,10 @@ bool LogicController::checkMoveParity(int side)
 
 void LogicController::moveNext(ChessMove *move, bool fast)
 {
+    if(!isValidMove(move)) return;
+
     auto from = findChessman(move->rowFrom(), move->columnFrom());
     auto to = findChessman(move->rowTo(), move->columnTo());
-    if(!isValidMove(from, to)) return;
 
     AbstractFigure *figureFrom = qobject_cast<AbstractFigure*>(m_chessman[from]);
     if(figureFrom == 0) return;
@@ -184,9 +193,10 @@ void LogicController::moveNext(ChessMove *move, bool fast)
 
 void LogicController::movePrev(ChessMove *move)
 {
+    if(!isValidMove(move)) return;
+
     auto to = findChessman(move->rowFrom(), move->columnFrom());
     auto from = findChessman(move->rowTo(), move->columnTo());
-    if(!isValidMove(from, to)) return;
 
     AbstractFigure *figureFrom = qobject_cast<AbstractFigure*>(m_chessman[from]);
     if(figureFrom == 0) return;

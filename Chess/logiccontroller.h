@@ -43,7 +43,8 @@ private:
 
     int index(const int row, const int column);
     int findChessman(const int row, const int column);
-    bool isValidMove(int from, int to);
+    bool isValidMove(ChessMove *move);
+    bool isValidTrace(ChessMove *move);
     bool checkMoveParity(int side);
 
     void moveNext(ChessMove *move, bool fast = false);

@@ -106,8 +106,8 @@ bool ChessMove::isAllowed()
                         || (distance(Bottom) == 1 && side() == t_Side::Black)))
 
                     || ((distance(Left) <= 0 && distance(Right) <= 0)
-                        && ((side() == t_Side::White) && (rowFrom() == MAX_ROWS - 2) && distance(Top) == 2)
-                        || ((side() == t_Side::Black) && (rowFrom() == 1) && distance(Bottom) == 2));
+                        && (((side() == t_Side::White) && (rowFrom() == MAX_ROWS - 2) && distance(Top) == 2)
+                        || ((side() == t_Side::Black) && (rowFrom() == 1) && distance(Bottom) == 2)));
         }
 
         case t_Figure::Rook: {
