@@ -5,7 +5,7 @@ void LogicController::initChessman()
     clear();
     for (int row = 0; row < MAX_ROWS; row++) {
         for (int column = 0; column < MAX_COLUMNS; column++) {
-            m_chessman.append(new AbstractFigure(row, column, true));
+            m_chessman.append(new AbstractFigure(row, column, true, this));
         }
     }
     emit chessmanChanged();
@@ -34,7 +34,7 @@ void LogicController::setCurrentMove(QObject *move) {
     if(chessmove != 0) {
         ChessMove* nextMove
                 = new ChessMove(chessmove->rowFrom(), chessmove->rowTo(), chessmove->columnFrom(), chessmove->columnTo()
-                    , chessmove->figure(), chessmove->side(), chessmove->prevFigure(), chessmove->prevSide());
+                    , chessmove->figure(), chessmove->side(), chessmove->prevFigure(), chessmove->prevSide(), this);
 
         m_chessmoves.append(nextMove);
         m_currentMove++;
@@ -107,7 +107,7 @@ void LogicController::loadGame()
     dataStream >> count;
 
     for (int i = 0; i < count; i++) {
-        ChessMove* move = new ChessMove();
+        ChessMove* move = new ChessMove(this);
         dataStream >> *move;
         m_chessmoves.append(move);
         processNextMove(true);
@@ -275,7 +275,7 @@ void LogicController::moveNext(ChessMove *move, bool fast)
     figureFrom->setRow(move->rowTo());
     figureFrom->setColumn(move->columnTo());
     m_chessman[to] = figureFrom;
-    m_chessman[from] = new AbstractFigure(move->rowFrom(), move->columnFrom());
+    m_chessman[from] = new AbstractFigure(move->rowFrom(), move->columnFrom(), false, this);
 
     if(!fast)
     emit chessmanChanged();
@@ -283,7 +283,7 @@ void LogicController::moveNext(ChessMove *move, bool fast)
 
 void LogicController::movePrev(ChessMove *move)
 {
-    if(!isValidMove(move)) return;
+    if(!isValidMove(move, true)) return;
 
     auto to = findChessman(move->rowFrom(), move->columnFrom());
     auto from = findChessman(move->rowTo(), move->columnTo());
@@ -294,7 +294,8 @@ void LogicController::movePrev(ChessMove *move)
     figureFrom->setRow(move->rowFrom());
     figureFrom->setColumn(move->columnFrom());
     m_chessman[to] = figureFrom;
-    m_chessman[from] = new AbstractFigure(move->rowTo(), move->columnTo(), (t_Side)move->prevSide(), (t_Figure)move->prevFigure() );
+    m_chessman[from] = new AbstractFigure(move->rowTo(), move->columnTo()
+                              , (t_Side)move->prevSide(), (t_Figure)move->prevFigure(), this);
 
     emit chessmanChanged();
 }

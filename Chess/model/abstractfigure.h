@@ -22,9 +22,9 @@ public:
     enum Figure { Empty = -1, King, Queen, Rook, Bishop, Knight, Pawn };
     enum Side { None = -1, White, Black };
 
-    explicit AbstractFigure();
-    explicit AbstractFigure(int row, int column, bool initialize = false);
-    explicit AbstractFigure(int row, int column, Side side, Figure figure);
+    explicit AbstractFigure(QObject *parent = 0);
+    explicit AbstractFigure(int row, int column, bool initialize, QObject *parent = 0);
+    explicit AbstractFigure(int row, int column, Side side, Figure figure, QObject *parent = 0);
 
 signals:
     void columnChanged();

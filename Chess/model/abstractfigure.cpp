@@ -1,25 +1,16 @@
 #include "abstractfigure.h"
 
-AbstractFigure::AbstractFigure() {
-    m_row = -1;
-    m_column = -1;
-    m_side = None;
-    m_figure = Empty;
+AbstractFigure::AbstractFigure(QObject *parent) :
+    m_row(-1), m_column(-1), m_side(None), m_figure(Empty), QObject(parent) {
 }
 
-AbstractFigure::AbstractFigure(int row, int column, bool initialize) {
-    m_row = row;
-    m_column = column;
-    m_side = None;
-    m_figure = Empty;
+AbstractFigure::AbstractFigure(int row, int column, bool initialize, QObject *parent) :
+    m_row(row), m_column(column), m_side(None), m_figure(Empty), QObject(parent) {
     if(initialize) init();
 }
 
-AbstractFigure::AbstractFigure(int row, int column, Side side, Figure figure) {
-    m_row = row;
-    m_column = column;
-    m_side = side;
-    m_figure = figure;
+AbstractFigure::AbstractFigure(int row, int column, Side side, Figure figure, QObject *parent) :
+    m_row(row), m_column(column), m_side(side), m_figure(figure), QObject(parent) {
     init();
 }
 
