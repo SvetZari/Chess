@@ -131,7 +131,7 @@ int LogicController::findChessman(const int row, const int column) {
     return -1;
 }
 
-bool LogicController::isValidMove(ChessMove *move)
+bool LogicController::isValidMove(ChessMove *move, bool back)
 {
     auto to = findChessman(move->rowFrom(), move->columnFrom());
     auto from = findChessman(move->rowTo(), move->columnTo());
@@ -147,19 +147,17 @@ bool LogicController::isValidMove(ChessMove *move)
     if(figureFrom->side() == figureTo->side())
         return false;
 
-    switch (move->figure())
-    {
-    case t_Figure::Pawn:
-        if(figureFrom->side() != figureTo->side() && figureFrom->side() != -1) {
-            if((move->rowFrom() != move->rowTo() && (move->columnFrom() != move->columnTo())))
-                return true;
-            else
-            return false;
+    if(!back) {
+        switch (move->figure()) {
+        case t_Figure::Pawn:
+            if(figureFrom->side() != figureTo->side() && figureFrom->side() != -1) {
+                if((move->rowFrom() != move->rowTo() && (move->columnFrom() != move->columnTo())))
+                    return true;
+                else
+                return false;
+            } break;
+        default: break;
         }
-        break;
-
-    default:
-        break;
     }
 
     return true;

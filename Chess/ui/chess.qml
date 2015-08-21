@@ -15,6 +15,8 @@ ApplicationWindow {
     width: 630; height: 670;
     visible: true
 
+    onClosing: scene.clearChessManModels();
+
     Rectangle {
         id: screen
         anchors.fill: parent
@@ -38,12 +40,17 @@ ApplicationWindow {
                 width: window.width - 40; height: window.height - 80;
                 anchors.centerIn: parent
 
-                function reloadModel() {
+                function clearChessManModels() {
+                    chessManPack.active = false;
+                }
+
+                function reloadModels() {
+                    chessManPack.active = false;
                     chessBoardPack.active = false;
+
                     chessBoardPack.model = GameBoard.chessBoardModel()
                     chessBoardPack.active = true;
 
-                    chessManPack.active = false;
                     chessManPack.model = controller.chessman;
                     chessManPack.active = true;
                 }
@@ -52,7 +59,7 @@ ApplicationWindow {
 
                 Connections {
                     target: controller
-                    onChessmanChanged: scene.reloadModel();
+                    onChessmanChanged: scene.reloadModels();
                 }
 
                 Rectangle {
@@ -150,9 +157,9 @@ ApplicationWindow {
                 btnStart.onClicked: {
                     controller.clear();
                     controller.initChessman();
-                    scene.reloadModel();
+                    scene.reloadModels();
                 }
-                btnStop.onClicked: chessManPack.active = false;
+                btnStop.onClicked: scene.clearChessManModels();
                 btnSave.onClicked: controller.saveGame();
                 btnLoad.onClicked: controller.loadGame();
                 btnPrev.onClicked: controller.processPrevMove();
