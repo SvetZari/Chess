@@ -9,8 +9,7 @@ function index(column, row) {
     return column + (row * columns);
 }
 
-function chessBoardModel()
-{
+function chessBoardModel() {
     chessboard = new Array(maxIndex);
     for (var column = 0; column < columns; column++)
         for (var row = 0; row < rows; row++)

@@ -66,14 +66,12 @@ ApplicationWindow {
                             model: GameBoard.chessBoardModel()
                             onObjectAdded: object.parent = chessBoardGrid;
 
-                            delegate: Component
-                            {
+                            delegate: Component {
                                 Item {
                                     width: screen.getSize(); height: screen.getSize();
                                     property var dataModel: chessBoardPack.model[index]
 
-                                    BoardPlate
-                                    {
+                                    BoardPlate {
                                         id: boardPlate
                                         anchors.fill: parent
                                         row: dataModel.row
@@ -104,16 +102,12 @@ ApplicationWindow {
                             model: null
                             onObjectAdded: object.parent = chessManGrid
 
-                            delegate: Component
-                            {
+                            delegate: Component {
                                 Item {
                                     width: screen.getSize(); height: screen.getSize();
                                     property var dataModel: chessManPack.model[index]
 
-                                    //Text { text: chessFigure.row + " " + chessFigure.column + " " + index }
-
-                                    GameFigure
-                                    {
+                                    GameFigure {
                                         id: chessFigure
                                         anchors.fill: parent
                                         row: dataModel.row
@@ -153,8 +147,7 @@ ApplicationWindow {
                 id: actionMenu
                 anchors.fill: parent
 
-                btnStart.onClicked:
-                {
+                btnStart.onClicked: {
                     controller.clear();
                     controller.initChessman();
                     scene.reloadModel();

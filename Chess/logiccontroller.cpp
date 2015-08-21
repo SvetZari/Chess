@@ -162,7 +162,6 @@ bool LogicController::isValidMove(ChessMove *move)
         break;
     }
 
-
     return true;
 }
 

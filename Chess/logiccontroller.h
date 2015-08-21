@@ -45,9 +45,8 @@ private:
     int findChessman(const int row, const int column);
     bool isValidMove(ChessMove *move);
     bool isValidTrace(ChessMove *move);
-    bool checkMoveParity(int side);
-
     bool validateTrace(ChessMove *move);
+    bool checkMoveParity(int side);
 
     void moveNext(ChessMove *move, bool fast = false);
     void movePrev(ChessMove *move);

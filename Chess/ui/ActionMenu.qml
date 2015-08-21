@@ -22,7 +22,6 @@ Item
     RowLayout {
         spacing: 50
         anchors.fill: parent
-
         Rectangle {
             Layout.fillHeight: true;
             Layout.fillWidth: true;
@@ -33,7 +32,6 @@ Item
             width: 150
             Layout.fillHeight: true
             visible: true
-
             Button {
                 id: btnStart
                 text: qsTr("Start")
@@ -45,7 +43,6 @@ Item
                     root.modeGameSaved = false;
                 }
             }
-
             Button {
                 id: btnLoad
                 text: qsTr("Load")
@@ -62,7 +59,6 @@ Item
             width: 150
             Layout.fillHeight: true
             visible: false
-
             Button {
                 id: btnStop
                 text: qsTr("Stop")
@@ -73,7 +69,6 @@ Item
                     menuStart.visible = true;
                 }
             }
-
             Button {
                 id: btnSave
                 text: qsTr("Save")
@@ -86,13 +81,11 @@ Item
             width: 150
             Layout.fillHeight: true
             visible: false
-
             Button {
                 id: btnPrev
                 text: qsTr("Prev")
                 anchors { left: parent.left; verticalCenter: parent.verticalCenter }
             }
-
             Button {
                 id: btnNext
                 text: qsTr("Next")
