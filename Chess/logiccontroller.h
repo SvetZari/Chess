@@ -31,7 +31,7 @@ public slots:
     void initChessman();
     void setCurrentMove(QObject *move);
     void clear();
-    void processNextMove(bool fast = false);
+    bool processNextMove(bool fast = false);
     void processPrevMove();
     void saveGame();
     void loadGame();
@@ -48,7 +48,7 @@ private:
     bool validateTrace(ChessMove *move);
     bool checkMoveParity(int side);
 
-    void moveNext(ChessMove *move, bool fast = false);
+    bool moveNext(ChessMove *move, bool fast = false);
     void movePrev(ChessMove *move);
 
     const QString m_gamesave
